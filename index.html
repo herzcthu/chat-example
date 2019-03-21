@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Socket.io test</title>
+	<style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font: 13px Helvetica, Arial; }
+        form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+        form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: #eee; }
+    </style>
+</head>
+<body>
+<div id="chat">
+	<ul class="messages" v-for="message in messages">
+		<li>{{ message }}</li>
+	</ul>
+<form v-on:submit.prevent="send" action="#">
+	<input v-model="message" />
+	<button type="submit">Send</button>
+</form>
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.9/vue.min.js"></script>
+<script>
+	var socket = io();
+
+	var app = new Vue({
+	  el: "#chat",
+
+	  data: {
+	  	messages: [],
+	  	message: ''
+	  },
+
+	  methods: {
+        send: function(e) {
+          socket.emit('chat.message', this.message);
+          this.message = '';
+          e.preventDefault();
+        }
+	  },
+        mounted: function() {
+        	messages = this.messages;
+        	this.$nextTick(function () {
+		  	socket.on('reply.message', function(message){
+		  		messages.push(message);
+		  	});
+
+		  });
+		}
+	  
+	});
+</script>
+</body>
+</html>
