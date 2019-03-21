@@ -44,13 +44,11 @@
         }
 	  },
         mounted: function() {
-        	messages = this.messages;
         	this.$nextTick(function () {
 		  	socket.on('reply.message', function(message){
-		  		messages.push(message);
-		  	});
-
-		  });
+		  		this.messages.push(message);
+		  	}.bind(this));
+		  }.bind(this));
 		}
 	  
 	});
